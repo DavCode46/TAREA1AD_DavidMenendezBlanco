@@ -1,11 +1,13 @@
 package controller;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -25,6 +27,18 @@ public class Sistema {
 	public Sistema(String archivoCredenciales, String archivoParadas) {
 		cargarCredenciales(archivoCredenciales);
 		cargarParadas(archivoParadas);
+	}
+	
+	public String obtenerPerfil(String nombreUsuario) {
+		Usuario u = credenciales.get(nombreUsuario);
+
+		return (u != null) ? u.getPerfil() : null;
+	}
+
+	public String getId(String nombreUsuario) {
+		Usuario u = credenciales.get(nombreUsuario);
+
+		return (u != null) ? u.getId() : null;
 	}
 
 	private void cargarCredenciales(String archivoCredenciales) {
@@ -51,7 +65,33 @@ public class Sistema {
 
 		return (u != null) && u.getContrasenia().equals(contrasenia);
 	}
-
+	
+	public boolean registrarCredenciales(String archivoCredenciales, String nombre, String contrasenia, String perfil) {
+		try(BufferedWriter bw = new BufferedWriter(new FileWriter(archivoCredenciales))) {
+			if(credenciales.containsKey(nombre)) {
+				JOptionPane.showMessageDialog(null, "El usuario ya existe");
+				return false;
+			}
+			
+			Long id = (long) credenciales.size() + 1;
+			String usuarioFormateado = String.format("%s %s %s %,d", nombre, contrasenia, perfil, id);
+			bw.write(usuarioFormateado);
+			bw.newLine();
+			JOptionPane.showMessageDialog(null, "Usuario registrado con éxito\n"
+					+ "Nombre: " + nombre
+					+ "\nContraseña: " + contrasenia
+					+ "\nPerfil: " + perfil
+					+ "\nID: " + id);
+			return true;
+		} catch(FileNotFoundException ex) {
+			System.out.println("Fichero no encontrado");
+			return false;
+		}catch(IOException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void cargarParadas(String archivoParadas) {
 	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivoParadas))) {
@@ -79,6 +119,7 @@ public class Sistema {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void mostrarParadas(String archivoParadas) {
 	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivoParadas))) {
 	        Map<String, Parada> paradasLeidas = (Map<String, Parada>) ois.readObject();
@@ -114,16 +155,9 @@ public class Sistema {
 		JOptionPane.showMessageDialog(null, "Parada registrada con éxito");
 		return true;
 	}
-
-	public String obtenerPerfil(String nombreUsuario) {
-		Usuario u = credenciales.get(nombreUsuario);
-
-		return (u != null) ? u.getPerfil() : null;
+	
+	public boolean paradaExiste(String nombre) {
+		return paradas.containsKey(nombre);
 	}
-
-	public String getId(String nombreUsuario) {
-		Usuario u = credenciales.get(nombreUsuario);
-
-		return (u != null) ? u.getId() : null;
-	}
+	
 }
