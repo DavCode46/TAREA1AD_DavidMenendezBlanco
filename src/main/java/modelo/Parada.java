@@ -1,10 +1,14 @@
 package modelo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Parada {
+public class Parada implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+	
 	private Long id;
 	private String nombre;
 	private char region;
