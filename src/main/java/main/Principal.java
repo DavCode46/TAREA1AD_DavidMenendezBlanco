@@ -1,10 +1,13 @@
 package main;
 
+import java.awt.Dimension;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import controller.Sistema;
 import modelo.Carnet;
@@ -17,6 +20,7 @@ public class Principal {
 
 	public static void main(String[] args) {
 
+		
 		mostrarMenu();
 
 	}
@@ -24,7 +28,10 @@ public class Principal {
 	private static void mostrarMenu() {
 		String archivoCredenciales = "files/credenciales.txt";
 		String archivoParadas = "files/paradas.dat";
-		Sistema sistema = new Sistema(archivoCredenciales, archivoParadas);		
+		Sistema sistema = new Sistema(archivoCredenciales, archivoParadas);
+		
+		String pais = JOptionPane.showInputDialog(null, sistema.mostrarPaises());
+		
 		Peregrino p = null;
 		Properties prop = new Properties();
 
@@ -76,12 +83,9 @@ public class Principal {
 						userActivo.setPerfil(sistema.obtenerPerfil(nombreUsuario));
 						userActivo.setId(sistema.getId(nombreUsuario));
 						userActivo.setNombreUsuario(nombreUsuario);
-						
 
-						
-
-						JOptionPane.showMessageDialog(null,
-								"Bienvenido " + nombreUsuario + "!\nPerfil: " + userActivo.getPerfil() + "\nID: " + userActivo.getId());
+						JOptionPane.showMessageDialog(null, "Bienvenido " + nombreUsuario + "!\nPerfil: "
+								+ userActivo.getPerfil() + "\nID: " + userActivo.getId());
 					} else {
 						JOptionPane.showMessageDialog(null, "Credenciales incorrectas.");
 						continue;
