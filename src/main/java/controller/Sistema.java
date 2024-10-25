@@ -21,22 +21,16 @@ import modelo.Perfil;
 import main.Sesion;
 
 public class Sistema {
-	
-	// Tareas a hacer
-	//Variable estática sesión con el perfil del usuario
 
 	private Map<String, Sesion> credenciales = new HashMap<>();
-	
-	
+
 	private Map<String, Parada> paradas = new HashMap<>();
-	
-	
 
 	public Sistema(String archivoCredenciales, String archivoParadas) {
 		cargarCredenciales(archivoCredenciales);
 		cargarParadas(archivoParadas);
 	}
-	
+
 	public Perfil obtenerPerfil(String nombreUsuario) {
 		Sesion s = credenciales.get(nombreUsuario);
 
@@ -60,7 +54,7 @@ public class Sistema {
 				Perfil perfil = Perfil.valueOf(perfilString.toUpperCase());
 				Long id = Long.parseLong(credencial[3]);
 
-				Sesion nuevoUsuario = new Sesion(usuario,  perfil, id);
+				Sesion nuevoUsuario = new Sesion(usuario, perfil, id);
 
 				credenciales.put(usuario, nuevoUsuario);
 			}
@@ -70,105 +64,107 @@ public class Sistema {
 	}
 
 	public boolean validarCredenciales(String archivoCredenciales, String nombreUsuario, String contrasenia) {
-	    try (BufferedReader br = new BufferedReader(new FileReader(archivoCredenciales))) {
-	        String linea;
-	        while ((linea = br.readLine()) != null) {
-	            String[] credencial = linea.split(" ");
-	            String usuario = credencial[0];
-	            String contraseniaGuardada = credencial[1];
-	            
-	            if (usuario.equals(nombreUsuario)) {
-	               
-	                return contraseniaGuardada.equals(contrasenia);
-	            }
-	        }
-	    } catch (IOException ex) {
-	        ex.printStackTrace();
-	    }
-	    return false;
+		try (BufferedReader br = new BufferedReader(new FileReader(archivoCredenciales))) {
+			String linea;
+			while ((linea = br.readLine()) != null) {
+				String[] credencial = linea.split(" ");
+				String usuario = credencial[0];
+				String contraseniaGuardada = credencial[1];
+
+				if (usuario.equals(nombreUsuario)) {
+
+					return contraseniaGuardada.equals(contrasenia);
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		return false;
 	}
 
-	
-	public boolean registrarCredenciales(String archivoCredenciales, String nombre, String contrasenia, String perfilString) {
-		try(BufferedWriter bw = new BufferedWriter(new FileWriter(archivoCredenciales, true))) {
-			if(credenciales.containsKey(nombre)) {
+	public boolean registrarCredenciales(String archivoCredenciales, String nombre, String contrasenia,
+			String perfilString) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoCredenciales, true))) {
+			if (credenciales.containsKey(nombre)) {
 				JOptionPane.showMessageDialog(null, "El usuario ya existe");
 				return false;
 			}
-			
-			 Perfil perfil = Perfil.valueOf(perfilString.toUpperCase());
+
+			Perfil perfil = Perfil.valueOf(perfilString.toUpperCase());
 			Long id = (long) credenciales.size() + 1;
 			String usuarioFormateado = String.format("%s %s %s %,d", nombre, contrasenia, perfil, id);
 			bw.write(usuarioFormateado);
 			bw.newLine();
-			JOptionPane.showMessageDialog(null, "Usuario registrado con éxito\n"
-					+ "Nombre: " + nombre
-					+ "\nContraseña: " + contrasenia
-					+ "\nPerfil: " + perfil
-					+ "\nID: " + id);
+			JOptionPane.showMessageDialog(null, "Usuario registrado con éxito\n" + "Nombre: " + nombre
+					+ "\nContraseña: " + contrasenia + "\nPerfil: " + perfil + "\nID: " + id);
 			return true;
-		} catch(FileNotFoundException ex) {
+		} catch (FileNotFoundException ex) {
 			System.out.println("Fichero no encontrado");
 			return false;
-		}catch(IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 			return false;
 		}
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	private void cargarParadas(String archivoParadas) {
-	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivoParadas))) {
-	        paradas = (Map<String, Parada>) ois.readObject();  
-	    } catch (FileNotFoundException ex) {
-	        System.out.println("No se ha encontrado el archivo de paradas. Creando uno nuevo...");
-	    
-	        paradas = new HashMap<>();
-	    } catch (EOFException ex) {
-	        System.out.println("El archivo de paradas está vacío. Iniciando con un mapa vacío.");
-	       
-	        paradas = new HashMap<>();
-	    } catch (IOException | ClassNotFoundException ex) {
-	        ex.printStackTrace();
-	    }
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivoParadas))) {
+			paradas = (Map<String, Parada>) ois.readObject();
+		} catch (FileNotFoundException ex) {
+			System.out.println("No se ha encontrado el archivo de paradas. Creando uno nuevo...");
+
+			paradas = new HashMap<>();
+		} catch (EOFException ex) {
+			System.out.println("El archivo de paradas está vacío. Iniciando con un mapa vacío.");
+
+			paradas = new HashMap<>();
+		} catch (IOException | ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
 	}
 
-
 	private void guardarParadas(String archivoParadas) {
-		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivoParadas,true))) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivoParadas, true))) {
 			oos.writeObject(paradas);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public void mostrarParadas(String archivoParadas) {
-	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivoParadas))) {
-	        Map<String, Parada> paradasLeidas = (Map<String, Parada>) ois.readObject();
-	        
-	        
-	        for (Parada parada : paradasLeidas.values()) {
-	            JOptionPane.showMessageDialog(null, "Paradas registradas: \n"
-	            					+"ID: " + parada.getId() +
-	                               "\nNombre: " + parada.getNombre() +
-	                               "\nRegión: " + parada.getRegion() +
-	                               "\nResponsable: " + parada.getResponsable());
-	        }
-	    } catch (FileNotFoundException ex) {
-	        System.out.println("No se ha encontrado el archivo de paradas.");
-	    } catch (EOFException ex) {
-	        System.out.println("El archivo de paradas está vacío.");
-	    } catch (IOException | ClassNotFoundException ex) {
-	        ex.printStackTrace();
-	    }
+	public void mostrarParadas(String archivoParadas, boolean isPeregrino) {
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivoParadas))) {
+			Map<String, Parada> paradasLeidas = (Map<String, Parada>) ois.readObject();
+
+			StringBuilder sb = new StringBuilder("Paradas registradas: \n");
+
+			for (Parada parada : paradasLeidas.values()) {
+				if (isPeregrino) {
+					sb.append("\nNombre: ").append(parada.getNombre());
+					sb.append("\nRegión: ").append(parada.getRegion());
+				} else {
+
+					sb.append("\nID: ").append(parada.getId());
+					sb.append("\nNombre: ").append(parada.getNombre());
+					sb.append("\nRegión: ").append(parada.getRegion());
+					sb.append("\nResponsable: ").append(parada.getResponsable());
+				}
+			}
+
+			JOptionPane.showMessageDialog(null, sb);
+		} catch (FileNotFoundException ex) {
+			System.out.println("No se ha encontrado el archivo de paradas.");
+		} catch (EOFException ex) {
+			System.out.println("El archivo de paradas está vacío.");
+		} catch (IOException | ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
 	}
 
-
 	public boolean registrarParada(String archivoParadas, String nombre, char region, String responsable) {
-		if(paradas.containsKey(nombre)) {
+		if (paradas.containsKey(nombre)) {
 			JOptionPane.showMessageDialog(null, "La parada ya existe");
 			return false;
 		}
@@ -176,13 +172,13 @@ public class Sistema {
 		Parada nuevaParada = new Parada(id, nombre, region, responsable);
 		paradas.put(nombre, nuevaParada);
 		guardarParadas(archivoParadas);
-		
+
 		JOptionPane.showMessageDialog(null, "Parada registrada con éxito");
 		return true;
 	}
-	
+
 	public boolean paradaExiste(String nombre) {
 		return paradas.containsKey(nombre);
 	}
-	
+
 }

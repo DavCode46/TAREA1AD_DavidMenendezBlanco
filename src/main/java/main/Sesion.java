@@ -5,8 +5,6 @@ import java.util.Objects;
 import modelo.Perfil;
 
 public class Sesion {
-
-	
 	
 	private String nombreUsuario;
 	private Perfil perfil;
