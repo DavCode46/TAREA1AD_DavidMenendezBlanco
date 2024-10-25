@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,7 +10,7 @@ public class Peregrino {
 	private String nombre;
 	private String nacionalidad;
 	private List<Estancia> estancias = new ArrayList<>();
-	private List<Parada> paradas = new ArrayList<>();
+	private List<Parada> paradas = new LinkedList<>();
 	private Carnet carnet;
 
 	public Peregrino() {

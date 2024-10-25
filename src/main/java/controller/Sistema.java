@@ -17,26 +17,35 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 import modelo.Parada;
-import modelo.Usuario;
+import modelo.Perfil;
+import main.Sesion;
 
 public class Sistema {
+	
+	// Tareas a hacer
+	//Variable estática sesión con el perfil del usuario
 
-	private Map<String, Usuario> credenciales = new HashMap<>();
+	private Map<String, Sesion> credenciales = new HashMap<>();
+	
+	
 	private Map<String, Parada> paradas = new HashMap<>();
+	
+	
 
 	public Sistema(String archivoCredenciales, String archivoParadas) {
 		cargarCredenciales(archivoCredenciales);
 		cargarParadas(archivoParadas);
 	}
 	
-	public String obtenerPerfil(String nombreUsuario) {
-		Usuario u = credenciales.get(nombreUsuario);
+	public Perfil obtenerPerfil(String nombreUsuario) {
+		Sesion s = credenciales.get(nombreUsuario);
 
-		return (u != null) ? u.getPerfil() : null;
+		System.out.print(s.getPerfil());
+		return (s != null) ? s.getPerfil() : null;
 	}
 
-	public String getId(String nombreUsuario) {
-		Usuario u = credenciales.get(nombreUsuario);
+	public Long getId(String nombreUsuario) {
+		Sesion u = credenciales.get(nombreUsuario);
 
 		return (u != null) ? u.getId() : null;
 	}
@@ -47,11 +56,11 @@ public class Sistema {
 			while ((linea = br.readLine()) != null) {
 				String[] credencial = linea.split(" ");
 				String usuario = credencial[0];
-				String contrasenia = credencial[1];
-				String perfil = credencial[2];
-				String id = credencial[3];
+				String perfilString = credencial[2];
+				Perfil perfil = Perfil.valueOf(perfilString.toUpperCase());
+				Long id = Long.parseLong(credencial[3]);
 
-				Usuario nuevoUsuario = new Usuario(usuario, contrasenia, perfil, id);
+				Sesion nuevoUsuario = new Sesion(usuario,  perfil, id);
 
 				credenciales.put(usuario, nuevoUsuario);
 			}
@@ -60,19 +69,34 @@ public class Sistema {
 		}
 	}
 
-	public boolean validarCredenciales(String nombreUsuario, String contrasenia) {
-		Usuario u = credenciales.get(nombreUsuario);
-
-		return (u != null) && u.getContrasenia().equals(contrasenia);
+	public boolean validarCredenciales(String archivoCredenciales, String nombreUsuario, String contrasenia) {
+	    try (BufferedReader br = new BufferedReader(new FileReader(archivoCredenciales))) {
+	        String linea;
+	        while ((linea = br.readLine()) != null) {
+	            String[] credencial = linea.split(" ");
+	            String usuario = credencial[0];
+	            String contraseniaGuardada = credencial[1];
+	            
+	            if (usuario.equals(nombreUsuario)) {
+	               
+	                return contraseniaGuardada.equals(contrasenia);
+	            }
+	        }
+	    } catch (IOException ex) {
+	        ex.printStackTrace();
+	    }
+	    return false;
 	}
+
 	
-	public boolean registrarCredenciales(String archivoCredenciales, String nombre, String contrasenia, String perfil) {
-		try(BufferedWriter bw = new BufferedWriter(new FileWriter(archivoCredenciales))) {
+	public boolean registrarCredenciales(String archivoCredenciales, String nombre, String contrasenia, String perfilString) {
+		try(BufferedWriter bw = new BufferedWriter(new FileWriter(archivoCredenciales, true))) {
 			if(credenciales.containsKey(nombre)) {
 				JOptionPane.showMessageDialog(null, "El usuario ya existe");
 				return false;
 			}
 			
+			 Perfil perfil = Perfil.valueOf(perfilString.toUpperCase());
 			Long id = (long) credenciales.size() + 1;
 			String usuarioFormateado = String.format("%s %s %s %,d", nombre, contrasenia, perfil, id);
 			bw.write(usuarioFormateado);
@@ -91,6 +115,7 @@ public class Sistema {
 			return false;
 		}
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	private void cargarParadas(String archivoParadas) {
@@ -111,7 +136,7 @@ public class Sistema {
 
 
 	private void guardarParadas(String archivoParadas) {
-		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivoParadas))) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivoParadas,true))) {
 			oos.writeObject(paradas);
 		} catch (IOException ex) {
 			ex.printStackTrace();
