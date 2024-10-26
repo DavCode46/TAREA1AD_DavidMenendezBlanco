@@ -1,16 +1,20 @@
 package main;
 
-import java.awt.Dimension;
+
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
+import controller.ExportarCarnetXML;
 import controller.Sistema;
 import modelo.Carnet;
+import modelo.Estancia;
+import modelo.Parada;
 import modelo.Peregrino;
 import modelo.Perfil;
 
@@ -20,8 +24,24 @@ public class Principal {
 
 	public static void main(String[] args) {
 
-		
-		mostrarMenu();
+		Peregrino p = new Peregrino(1L, "Pepe", "España", new Carnet(1L, new Parada(1L, "Sevilla", 'A', "Pepe")));
+		Parada parada = new Parada(1L, "Sevilla", 'A', "Jose");
+		Parada parada2 = new Parada(2L, "Asturias", 'B', "Diego");
+		List<Estancia> estancias = new ArrayList<>();
+		List <Parada> paradas = new ArrayList<>();
+		paradas.add(parada);
+		paradas.add(parada2);
+		estancias.add(new Estancia(1L, LocalDate.of(2022, 10, 30), true, p, parada));
+		estancias.add(new Estancia(2L, LocalDate.of(1993, 10, 16), false, p, parada2));
+		p.setEstancias(estancias);
+		p.setParadas(paradas);
+		ExportarCarnetXML exportar = new ExportarCarnetXML();
+		try {
+            exportar.exportarCarnet(p);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	//	mostrarMenu();
 
 	}
 
@@ -121,7 +141,7 @@ public class Principal {
 				int respuesta = JOptionPane.showConfirmDialog(null, "¿Estás seguro que quieres salir?", "Confirmar",
 						JOptionPane.YES_NO_OPTION);
 				if (respuesta == JOptionPane.YES_OPTION) {
-					JOptionPane.showMessageDialog(null, "Hasta la próxima");
+					JOptionPane.showMessageDialog(null, "Has salido del sistema.");
 					userActivo = null;
 					break;
 				}

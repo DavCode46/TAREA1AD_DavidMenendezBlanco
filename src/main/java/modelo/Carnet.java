@@ -14,12 +14,9 @@ public class Carnet {
 		super();
 	}
 
-	public Carnet(Long id, LocalDate fechaExp, double distancia, int nVips, Parada paradaInicial) {
+	public Carnet(Long id, Parada paradaInicial) {
 		super();
 		this.id = id;
-		this.fechaExp = fechaExp;
-		this.distancia = distancia;
-		this.nVips = nVips;
 		this.paradaInicial = paradaInicial;
 	}
 
