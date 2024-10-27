@@ -6,4 +6,4 @@ ferrol ferrol parada 4
 luis luis peregrino 2
 marta marta peregrino 3
 laura laura peregrino 4
-admin admin administrador 1
+david david parada 5
