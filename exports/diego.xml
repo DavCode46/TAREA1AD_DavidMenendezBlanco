@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<carnet>
+    <id>5</id>
+    <fechaexp>2024-10-27</fechaexp>
+    <expedidoen>david</expedidoen>
+    <peregrino>
+        <nombre>diego</nombre>
+        <nacionalidad>luxemburgo</nacionalidad>
+    </peregrino>
+    <hoy>2024-10-27</hoy>
+    <distanciatotal>0,0</distanciatotal>
+    <paradas>
+        <parada>
+            <orden>1</orden>
+            <nombre>david</nombre>
+            <region>d</region>
+        </parada>
+    </paradas>
+    <estancias/>
+</carnet>

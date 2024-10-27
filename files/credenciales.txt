@@ -7,3 +7,4 @@ luis luis peregrino 2
 marta marta peregrino 3
 laura laura peregrino 4
 david david parada 5
+diego diego peregrino 5

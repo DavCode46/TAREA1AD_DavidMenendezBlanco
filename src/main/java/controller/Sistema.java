@@ -251,7 +251,7 @@ public class Sistema {
 		if (nuevaNacionalidad == null)
 			return null;
 
-		String nuevaParada = obtenerEntrada("¿En qué nueva parada se encuentra?", parada, false);
+		String nuevaParada = obtenerEntrada(mostrarParadas(archivoParadas, true), parada, false);
 		if (nuevaParada == null)
 			return null;
 

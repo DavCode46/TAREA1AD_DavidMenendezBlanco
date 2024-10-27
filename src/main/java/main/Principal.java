@@ -79,7 +79,7 @@ public class Principal {
 				String nombreUsuario = "";
 				String contrasenia = "";
 
-				do {
+				MENU: do {
 
 					nombreUsuario = sistema.obtenerEntrada("Ingrese su nombre de usuario", "Nombre de usuario", false);
 
@@ -115,7 +115,7 @@ public class Principal {
 					}
 					case administrador: {
 						mostrarOpcionesAdmin(sistema, archivoCredenciales, archivoParadas, nombreUsuario);
-						break;
+						break MENU;
 					}
 					case parada: {
 						// Implementación futura -->  Opciones responsable de parada...
@@ -269,11 +269,10 @@ public class Principal {
 					JOptionPane.showMessageDialog(null, "Has cerrado sesión.");
 					userActivo = new Sesion("Invitado", Perfil.invitado, 1L);
 					return;
-				} else {
-					JOptionPane.showMessageDialog(null, "Volviendo al menú...");
-
 				}
-				break;
+				JOptionPane.showMessageDialog(null, "Volviendo al menú...");
+
+				continue;
 			}
 			default:
 				JOptionPane.showMessageDialog(null, "Opción no válida.");
