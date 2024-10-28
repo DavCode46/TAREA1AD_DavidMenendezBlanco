@@ -151,12 +151,21 @@ public class Principal {
 				if (p != null) {
 					userActivo = new Sesion(p.getNombre(), Perfil.peregrino, p.getId());
 					String mensajeBienvenida = String.format(
-							"Sus datos: \n " + "ID: %s\n " + "Nombre: %s\n" + "Nacionalidad: %s\n"
+							"Sus datos:\n" + "ID: %s\n" + "Nombre: %s\n" + "Nacionalidad: %s\n"
 									+ "Fecha de expedición del carnet: %s\n" + "Parada inicial: %s\n"
 									+ "Región de la parada: %s\n",
 							p.getId(), p.getNombre(), p.getNacionalidad(), p.getCarnet().getFechaExp(),
 							p.getParadas().get(0).getNombre(), p.getParadas().get(0).getRegion());
 					JOptionPane.showMessageDialog(null, mensajeBienvenida);
+					ExportarCarnetXML exportar = new ExportarCarnetXML();
+					try {
+						exportar.exportarCarnet(p);
+					} catch (NullPointerException ex) {
+						JOptionPane.showMessageDialog(null,
+								"No tiene carnet de peregrino disponible, cree uno en la parada inicial.");
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 					mostrarOpcionesPeregrino(p, sistema);
 				}
 				break;

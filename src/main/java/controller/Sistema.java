@@ -290,7 +290,7 @@ public class Sistema {
 	 */
 	private Peregrino confirmarDatos(String nombre, String contrasenia, String nacionalidad, String parada,
 			String archivoCredenciales) {
-		String mensajeFormateado = String.format("Confirma los datos \n" + "Nombre: %s \n" + "Contraseña: %s\n"
+		String mensajeFormateado = String.format("Verifica que los datos son correctos \n" + "Nombre: %s \n" + "Contraseña: %s\n"
 				+ "Nacionalidad: %s\n" + "Parada actual: %s\n", nombre, contrasenia, nacionalidad, parada);
 
 		int confirmacion = JOptionPane.showConfirmDialog(null, mensajeFormateado, "Confirma",
@@ -305,6 +305,7 @@ public class Sistema {
 				Parada paradaObj = obtenerParada(parada);
 				Peregrino nuevoPeregrino = new Peregrino(id, nombre, nacionalidad, new Carnet(id, paradaObj));
 				nuevoPeregrino.getParadas().add(paradaObj);
+				paradaObj.getPeregrinos().add(nuevoPeregrino);
 				registrarCredenciales(archivoCredenciales, nombre, contrasenia,
 						Perfil.peregrino.toString().toLowerCase(), true);
 				return nuevoPeregrino;
@@ -326,7 +327,6 @@ public class Sistema {
 	 */
 	private Peregrino obtenerDatosModificados(String archivoCredenciales, String archivoParadas, String nombre, String contrasenia,
 			String nacionalidad, String parada) {
-		Peregrino nuevoPeregrino = null;
 		// Pide los nuevos datos al usuario
 		String nuevoNombre = obtenerEntrada("Ingrese su nuevo nombre", nombre, false);
 		if (nuevoNombre == null)
@@ -344,13 +344,19 @@ public class Sistema {
 		if (nuevaParada == null)
 			return null;
 
-		// Crear el nuevo peregrino
-		Long id = obtenerSiguienteId(archivoCredenciales, true);
-		Parada paradaObj = obtenerParada(nuevaParada);
-		nuevoPeregrino = new Peregrino(id, nuevoNombre, nuevaNacionalidad, new Carnet(id, paradaObj));
-		nuevoPeregrino.getParadas().add(paradaObj);
-		paradaObj.getPeregrinos().add(nuevoPeregrino);
-		return nuevoPeregrino;
+		if (validarCredenciales(archivoCredenciales, nombre, contrasenia)) {
+			JOptionPane.showMessageDialog(null, "El usuario ya existe");
+			return null;
+		} else {
+			Long id = obtenerSiguienteId(archivoCredenciales, true);
+			Parada paradaObj = obtenerParada(parada);
+			Peregrino nuevoPeregrino = new Peregrino(id, nombre, nacionalidad, new Carnet(id, paradaObj));
+			nuevoPeregrino.getParadas().add(paradaObj);
+			paradaObj.getPeregrinos().add(nuevoPeregrino);
+			registrarCredenciales(archivoCredenciales, nombre, contrasenia,
+					Perfil.peregrino.toString().toLowerCase(), true);
+			return nuevoPeregrino;
+		}
 	}
 
 	/**
