@@ -376,7 +376,7 @@ public class Sistema {
 	 * @param archivoParadas
 	 */
 	private void guardarParadas(String archivoParadas) {
-		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivoParadas, true))) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivoParadas))) {
 			oos.writeObject(paradas);
 		} catch (IOException ex) {
 			ex.printStackTrace();

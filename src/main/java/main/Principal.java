@@ -34,7 +34,7 @@ public class Principal {
 	 */
 	public static void main(String[] args) {
 		/*
-		 * Datos ficticios para probar la salida del archivo XML exportado 
+		 * Datos ficticios para probar la salida del archivo XML exportado
 		 * 
 		 * Peregrino p = new Peregrino(1L, "Pepe", "España", new Carnet(1L, new
 		 * Parada(1L, "Sevilla", 'A', "Pepe"))); Parada parada = new Parada(1L,
@@ -253,7 +253,7 @@ public class Principal {
 		JOptionPane.showMessageDialog(null,
 				"Bienvenido " + nombreUsuario + "!\nPerfil: " + userActivo.getPerfil() + "\nID: " + userActivo.getId());
 		do {
-			String menu = "1. Registrar responsable de parada\n" + "0. Cerrar sesión\n";
+			String menu = "1. Registrar parada\n" + "0. Cerrar sesión\n";
 			opcion = sistema.obtenerEntrada(menu, "Selecciona una opción", true);
 			if (opcion == null) {
 				JOptionPane.showMessageDialog(null, "Selecciona una opción.");

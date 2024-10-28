@@ -11,3 +11,6 @@ diego diego peregrino 6
 santi santi peregrino 7
 a a peregrino 8
 d d peregrino 9
+siero siero parada 5
+oviedo oviedo parada 6
+nueva nueva parada 7
