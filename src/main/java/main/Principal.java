@@ -153,9 +153,11 @@ public class Principal {
 					String mensajeBienvenida = String.format(
 							"Sus datos:\n" + "ID: %s\n" + "Nombre: %s\n" + "Nacionalidad: %s\n"
 									+ "Fecha de expedición del carnet: %s\n" + "Parada inicial: %s\n"
-									+ "Región de la parada: %s\n",
+									+ "Región de la parada: %s\n"
+									+ "Distancia recorrida: %.2f km\n"
+									+ "Número de VIPS: %d\n",
 							p.getId(), p.getNombre(), p.getNacionalidad(), p.getCarnet().getFechaExp(),
-							p.getParadas().get(0).getNombre(), p.getParadas().get(0).getRegion());
+							p.getParadas().get(0).getNombre(), p.getParadas().get(0).getRegion(), p.getCarnet().getDistancia(), p.getCarnet().getnVips());
 					JOptionPane.showMessageDialog(null, mensajeBienvenida);
 					ExportarCarnetXML exportar = new ExportarCarnetXML();
 					try {
