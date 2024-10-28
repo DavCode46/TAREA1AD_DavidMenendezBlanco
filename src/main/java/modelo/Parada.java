@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 
+ * Clase que representa una parada, en cada parada se almacena una lista de peregrinos
+ */
 public class Parada implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -88,8 +92,9 @@ public class Parada implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Parada [id=" + id + ", nombre=" + nombre + ", region=" + region + ", responsable=" + responsable
-				+ ", peregrinos=" + peregrinos + "]";
+	    return "Parada [id=" + id + ", nombre=" + nombre + ", region=" + region + ", responsable=" + responsable + 
+	           ", cantidad de peregrinos=" + peregrinos.size() + "]";  
 	}
+
 
 }

@@ -32,6 +32,14 @@ import modelo.Parada;
 import modelo.Peregrino;
 import modelo.Perfil;
 
+/**
+ * La clase Sistema se encarga de gestionar el sistema de registro y autenticación de credenciales,
+ * así como el manejo de paradas y peregrinos. Proporciona métodos para validar, registrar usuarios,
+ * y gestionar la información de peregrinos en el sistema.
+ * 
+ * Utiliza archivos de texto y objetos serializables para almacenar los datos de credenciales y
+ * paradas, y utiliza un archivo XML para cargar la lista de países disponibles.
+ */
 public class Sistema {
 
 	private String archivoCredenciales;
@@ -41,6 +49,11 @@ public class Sistema {
 
 	private Map<String, Parada> paradas = new HashMap<>();
 
+	 /**
+     * Constructor que inicializa el sistema con los archivos de credenciales y paradas.
+     * @param archivoCredenciales Ruta del archivo de credenciales.
+     * @param archivoParadas Ruta del archivo de paradas.
+     */
 	public Sistema(String archivoCredenciales, String archivoParadas) {
 		this.archivoCredenciales = archivoCredenciales;
 		this.archivoParadas = archivoParadas;
@@ -48,6 +61,11 @@ public class Sistema {
 		cargarParadas(archivoParadas);
 	}
 
+	  /**
+     * Obtiene el perfil asociado a un nombre de usuario.
+     * @param nombreUsuario Nombre de usuario.
+     * @return Perfil del usuario o null si no existe.
+     */
 	public Perfil obtenerPerfil(String nombreUsuario) {
 		Sesion s = credenciales.get(nombreUsuario);
 
@@ -55,16 +73,32 @@ public class Sistema {
 		return (s != null) ? s.getPerfil() : null;
 	}
 
+	/**
+     * Obtiene una parada según su nombre.
+     * @param nombreParada Nombre de la parada.
+     * @return Objeto Parada asociado al nombre, o null si no existe.
+     */
 	public Parada obtenerParada(String nombreParada) {
 		return paradas.get(nombreParada);
 	}
 
+	/**
+     * Obtiene el ID asociado a un nombre de usuario.
+     * @param nombreUsuario Nombre de usuario.
+     * @return ID del usuario o null si no existe.
+     */
 	public Long getId(String nombreUsuario) {
 		Sesion u = credenciales.get(nombreUsuario);
 
 		return (u != null) ? u.getId() : null;
 	}
 
+	 /**
+     * Calcula el siguiente ID disponible para un tipo específico de usuario.
+     * @param archivoCredenciales Archivo de credenciales.
+     * @param esPeregrino Si es true, considera solo usuarios peregrinos; si no, paradas.
+     * @return El siguiente ID disponible.
+     */
 	public Long obtenerSiguienteId(String archivoCredenciales, boolean esPeregrino) {
 		long maxId = 0;
 
@@ -92,6 +126,10 @@ public class Sistema {
 		return maxId + 1;
 	}
 
+	/**
+     * Carga las credenciales desde el archivo especificado.
+     * @param archivoCredenciales Ruta del archivo de credenciales.
+     */
 	private void cargarCredenciales(String archivoCredenciales) {
 		try (BufferedReader br = new BufferedReader(new FileReader(archivoCredenciales))) {
 			String linea;
@@ -111,6 +149,13 @@ public class Sistema {
 		}
 	}
 
+	 /**
+     * Valida las credenciales de un usuario.
+     * @param archivoCredenciales Archivo de credenciales.
+     * @param nombreUsuario Nombre de usuario.
+     * @param contrasenia Contraseña del usuario.
+     * @return true si las credenciales son válidas; false en caso contrario.
+     */
 	public boolean validarCredenciales(String archivoCredenciales, String nombreUsuario, String contrasenia) {
 		try (BufferedReader br = new BufferedReader(new FileReader(archivoCredenciales))) {
 			String linea;
@@ -130,6 +175,15 @@ public class Sistema {
 		return false;
 	}
 
+	 /**
+     * Registra un nuevo usuario en el sistema.
+     * @param archivoCredenciales Archivo de credenciales.
+     * @param nombre Nombre del usuario.
+     * @param contrasenia Contraseña del usuario.
+     * @param perfilString Perfil del usuario como cadena.
+     * @param esPeregrino true si es peregrino; false si es una parada.
+     * @return true si el registro fue exitoso; false en caso contrario.
+     */
 	public boolean registrarCredenciales(String archivoCredenciales, String nombre, String contrasenia,
 			String perfilString, boolean esPeregrino) {
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoCredenciales, true))) {
@@ -164,11 +218,21 @@ public class Sistema {
 		}
 	}
 
+	/**
+     * Inicia el proceso de registro para un nuevo peregrino.
+     * @return Objeto Peregrino registrado o null si el proceso se cancela.
+     */
 	public Peregrino registrarPeregrino() {
 
 		return registrarPeregrino(archivoParadas, archivoCredenciales);
 	}
 
+	/**
+	 * 	
+	 * @param archivoParadas
+	 * @param archivoCredenciales
+	 * @return
+	 */
 	private Peregrino registrarPeregrino(String archivoParadas, String archivoCredenciales) {
 		Peregrino nuevoPeregrino = null;
 		JOptionPane.showMessageDialog(null, "Formulario de registro de nuevo peregrino");
@@ -184,7 +248,7 @@ public class Sistema {
 
 		String nacionalidad = "";
 		do {
-			nacionalidad = obtenerEntrada(mostrarPaises(), "Nacionalidad", false);
+			nacionalidad = obtenerEntrada(mostrarPaises(), "Introduce el id de tu país", false);
 			if(!validarPais(nacionalidad)){
 				JOptionPane.showMessageDialog(null, "El país ingresado no es válido.");
 			}
@@ -198,6 +262,7 @@ public class Sistema {
 			}
 		} while(!paradaExiste(parada));
 
+		
 		// Confirmar los datos
 		nuevoPeregrino = confirmarDatos(nombre, contrasenia, nacionalidad, parada, archivoCredenciales);
 
@@ -207,10 +272,22 @@ public class Sistema {
 			nuevoPeregrino = obtenerDatosModificados(archivoCredenciales, nombre, contrasenia, nacionalidad, parada);
 
 		}
+		Parada paradaEncontrada = obtenerParada(parada);
+		paradaEncontrada.getPeregrinos().add(nuevoPeregrino);
 
 		return nuevoPeregrino;
 	}
 
+	/**
+	 * Muestra un JOptionPane con los datos introducidos por el usuario
+	 * para que este los confirme
+	 * @param nombre
+	 * @param contrasenia
+	 * @param nacionalidad
+	 * @param parada
+	 * @param archivoCredenciales
+	 * @return Peregrino con los datos introducidos por el usuario
+	 */
 	private Peregrino confirmarDatos(String nombre, String contrasenia, String nacionalidad, String parada,
 			String archivoCredenciales) {
 		String mensajeFormateado = String.format("Confirma los datos \n" + "Nombre: %s \n" + "Contraseña: %s\n"
@@ -236,6 +313,17 @@ public class Sistema {
 		return null; // Si el usuario cancela
 	}
 
+	/**
+	 * Vuelve a mostrar los formularios para que el usuario modifique
+	 * sus datos, solo se muestra si el usuario indica que los datos 
+	 * mostrados en confirmarDatos no son correctos
+	 * @param archivoCredenciales
+	 * @param nombre
+	 * @param contrasenia
+	 * @param nacionalidad
+	 * @param parada
+	 * @return Peregrino con los datos modificados
+	 */
 	private Peregrino obtenerDatosModificados(String archivoCredenciales, String nombre, String contrasenia,
 			String nacionalidad, String parada) {
 		// Pide los nuevos datos al usuario
@@ -261,6 +349,10 @@ public class Sistema {
 		return new Peregrino(id, nuevoNombre, nuevaNacionalidad, new Carnet(id, paradaObj));
 	}
 
+	/**
+	 * Carga en el sistema las paradas disponibles
+	 * @param archivoParadas
+	 */
 	@SuppressWarnings("unchecked")
 	private void cargarParadas(String archivoParadas) {
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivoParadas))) {
@@ -278,6 +370,11 @@ public class Sistema {
 		}
 	}
 
+	/**
+	 * Sobreescribe el archivo paradas con las nuevas paradas introducidas 
+	 * por el administrador del sistema, las cuales se pasan mediante un Map
+	 * @param archivoParadas
+	 */
 	private void guardarParadas(String archivoParadas) {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivoParadas, true))) {
 			oos.writeObject(paradas);
@@ -286,6 +383,12 @@ public class Sistema {
 		}
 	}
 
+	 /**
+     * Muestra las paradas registradas en el sistema.
+     * @param archivoParadas Archivo de paradas.
+     * @param isPeregrino Si es true, muestra solo el nombre y región.
+     * @return Lista de paradas formateada como cadena.
+     */
 	@SuppressWarnings("unchecked")
 	public String mostrarParadas(String archivoParadas, boolean isPeregrino) {
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivoParadas))) {
@@ -317,6 +420,14 @@ public class Sistema {
 		return "No se han encontrado paradas";
 	}
 
+	 /**
+     * Registra una nueva parada en el sistema.
+     * @param archivoParadas Archivo de paradas.
+     * @param nombre Nombre de la parada.
+     * @param region Región de la parada.
+     * @param responsable Responsable de la parada.
+     * @return true si el registro fue exitoso; false en caso contrario.
+     */
 	public boolean registrarParada(String archivoParadas, String nombre, char region, String responsable) {
 		if (paradas.containsKey(nombre)) {
 			JOptionPane.showMessageDialog(null, "La parada ya existe");
@@ -331,10 +442,19 @@ public class Sistema {
 		return true;
 	}
 
+	/**
+     * Verifica si una parada existe en el sistema.
+     * @param nombre Nombre de la parada.
+     * @return true si la parada existe; false en caso contrario.
+     */
 	public boolean paradaExiste(String nombre) {
 		return paradas.containsKey(nombre);
 	}
 
+	 /**
+     * Muestra la lista de países disponibles cargada desde el archivo XML.
+     * @return Cadena formateada con los países.
+     */
 	public String mostrarPaises() {
 		try {
 			// Crear un parser
@@ -373,6 +493,11 @@ public class Sistema {
 		return "No se han encontrado países";
 	}
 	
+	 /**
+     * Valida si una nacionalidad es válida según los datos del archivo XML.
+     * @param nacionalidad ID de la nacionalidad.
+     * @return true si es válida; false en caso contrario.
+     */
 	private boolean validarPais(String nacionalidad) {
 	    try {
 	        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -382,8 +507,8 @@ public class Sistema {
 
 	        for (int i = 0; i < paises.getLength(); i++) {
 	            Element elemento = (Element) paises.item(i);
-	            String nombrePais = getNodo("nombre", elemento);
-	            if (nombrePais.equalsIgnoreCase(nacionalidad)) {
+	            String idPais = getNodo("id", elemento);
+	            if (idPais.equalsIgnoreCase(nacionalidad)) {
 	                return true; 
 	            }
 	        }
@@ -393,6 +518,12 @@ public class Sistema {
 	    return false; 
 	}
 
+	/**
+     * Valida un String según los criterios establecidos (no vacío, sin espacios iniciales, etc.).
+     * @param str String a validar.
+     * @param esMenu true si es una entrada de menú; false si es un nombre.
+     * @return true si es válido; false en caso contrario.
+     */
 	public boolean validarStr(String str, boolean esMenu) {
 
 		if (str.isEmpty()) {
@@ -416,6 +547,13 @@ public class Sistema {
 		return true;
 	}
 
+	 /**
+     * Solicita al usuario una entrada y valida el valor según los criterios establecidos.
+     * @param mensaje Mensaje a mostrar al usuario.
+     * @param titulo Título de la entrada.
+     * @param esMenu true si la entrada es una opción de menú; false si es un valor de campo.
+     * @return Entrada validada como cadena.
+     */
 	public String obtenerEntrada(String mensaje, String titulo, boolean esMenu) {
 		String entrada;
 		do {
@@ -438,6 +576,12 @@ public class Sistema {
 		return entrada.trim();
 	}
 
+	 /**
+     * Obtiene el valor de un nodo XML específico.
+     * @param etiqueta Nombre de la etiqueta.
+     * @param elem Elemento XML.
+     * @return Valor del nodo como cadena.
+     */
 	private static String getNodo(String etiqueta, Element elem) {
 		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0).getChildNodes();
 		Node valorNodo = nodo.item(0);

@@ -19,8 +19,22 @@ import modelo.Estancia;
 import modelo.Parada;
 import modelo.Peregrino;
 
+/**
+ * La clase ExportarCarnetXML se encarga de generar un archivo XML que contiene 
+ * los datos de un objeto Peregrino, incluyendo su carnet, paradas y estancias.
+ * El archivo se exporta a una ubicación en el sistema de archivos, y notifica
+ * al usuario al finalizar.
+ */
 public class ExportarCarnetXML {
 
+	 /**
+     * Exporta los datos de un peregrino a un archivo XML en el sistema de archivos.
+     * El archivo contiene la información del carnet, las paradas y las estancias 
+     * asociadas al peregrino.
+     *
+     * @param peregrino El objeto Peregrino que se exportará en formato XML.
+     * @throws Exception Si ocurre un error durante la creación del archivo XML.
+     */
     public void exportarCarnet(Peregrino peregrino) throws Exception {
        
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

@@ -17,33 +17,46 @@ import modelo.Parada;
 import modelo.Peregrino;
 import modelo.Perfil;
 
+/**
+ * Clase principal del sistema de gestión de peregrinos y paradas. Proporciona
+ * el menú principal y las opciones para iniciar sesión, registrarse como
+ * peregrino, y gestionar funcionalidades de usuario según el perfil. Se integra
+ * con la clase {@link Sistema} para la gestión de usuarios y paradas.
+ */
 public class Principal {
 
 	static Sesion userActivo = new Sesion("Invitado", Perfil.invitado, 1L);
 
+	/**
+	 * Método principal que inicia el programa mostrando el menú principal.
+	 *
+	 * @param args Argumentos de la línea de comandos (no se utilizan).
+	 */
 	public static void main(String[] args) {
+		/*
+		 * Datos ficticios para probar la salida del archivo XML exportado 
+		 * 
+		 * Peregrino p = new Peregrino(1L, "Pepe", "España", new Carnet(1L, new
+		 * Parada(1L, "Sevilla", 'A', "Pepe"))); Parada parada = new Parada(1L,
+		 * "Sevilla", 'A', "Jose"); Parada parada2 = new Parada(2L, "Asturias", 'B',
+		 * "Diego"); List<Estancia> estancias = new ArrayList<>(); List <Parada> paradas
+		 * = new ArrayList<>(); paradas.add(parada); paradas.add(parada2);
+		 * estancias.add(new Estancia(1L, LocalDate.of(2022, 10, 30), true, p, parada));
+		 * estancias.add(new Estancia(2L, LocalDate.of(1993, 10, 16), false, p,
+		 * parada2)); p.setEstancias(estancias); p.setParadas(paradas);
+		 * ExportarCarnetXML exportar = new ExportarCarnetXML(); try {
+		 * exportar.exportarCarnet(p); } catch (Exception e) { e.printStackTrace(); }
+		 */
 
-//		Peregrino p = new Peregrino(1L, "Pepe", "España", new Carnet(1L, new Parada(1L, "Sevilla", 'A', "Pepe")));
-//		Parada parada = new Parada(1L, "Sevilla", 'A', "Jose");
-//		Parada parada2 = new Parada(2L, "Asturias", 'B', "Diego");
-//		List<Estancia> estancias = new ArrayList<>();
-//		List <Parada> paradas = new ArrayList<>();
-//		paradas.add(parada);
-//		paradas.add(parada2);
-//		estancias.add(new Estancia(1L, LocalDate.of(2022, 10, 30), true, p, parada));
-//		estancias.add(new Estancia(2L, LocalDate.of(1993, 10, 16), false, p, parada2));
-//		p.setEstancias(estancias);
-//		p.setParadas(paradas);
-//		ExportarCarnetXML exportar = new ExportarCarnetXML();
-//		try {
-//            exportar.exportarCarnet();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 		mostrarMenu();
 
 	}
 
+	/**
+	 * Muestra el menú principal, permitiendo a los usuarios iniciar sesión,
+	 * registrarse como peregrino, o salir del sistema. Dependiendo del perfil, se
+	 * habilitan opciones específicas para cada usuario.
+	 */
 	private static void mostrarMenu() {
 		String archivoCredenciales = "files/credenciales.txt";
 		String archivoParadas = "files/paradas.dat";
@@ -65,7 +78,7 @@ public class Principal {
 
 		do {
 			String menu = "1. Login\n" + "2. Registrarse como peregrino\n" + "3. Salir\n";
-			
+
 			opcion = sistema.obtenerEntrada(menu, "Selecciona una opción", true);
 
 			if (opcion == null) {
@@ -118,7 +131,7 @@ public class Principal {
 						break MENU;
 					}
 					case parada: {
-						// Implementación futura -->  Opciones responsable de parada...
+						// Implementación futura --> Opciones responsable de parada...
 						// mostrarOpcionesParada();
 						JOptionPane.showMessageDialog(null, "Sección en desarrollo...");
 						break;
@@ -134,15 +147,15 @@ public class Principal {
 			case "2": {
 				// Registrar peregrino
 				p = sistema.registrarPeregrino();
+				System.out.print(p.getParadas());
 				if (p != null) {
 					userActivo = new Sesion(p.getNombre(), Perfil.peregrino, p.getId());
-					String mensajeBienvenida = String.format("Sus datos: \n "
-							+ "ID: %s\n "
-							+ "Nombre: %s\n"
-							+ "Nacionalidad: %s\n"
-							+ "Fecha de expedición del carnet: %s\n"
-							+ "Parada inicial: %s\n"
-							+ "Región de la parada: %s\n",p.getId() , p.getNombre(), p.getNacionalidad(), p.getCarnet().getFechaExp(), p.getParadas().get(0).getNombre(), p.getParadas().get(0).getRegion());
+					String mensajeBienvenida = String.format(
+							"Sus datos: \n " + "ID: %s\n " + "Nombre: %s\n" + "Nacionalidad: %s\n"
+									+ "Fecha de expedición del carnet: %s\n" + "Parada inicial: %s\n"
+									+ "Región de la parada: %s\n",
+							p.getId(), p.getNombre(), p.getNacionalidad(), p.getCarnet().getFechaExp(),
+							p.getParadas().get(0).getNombre(), p.getParadas().get(0).getRegion());
 					JOptionPane.showMessageDialog(null, mensajeBienvenida);
 					mostrarOpcionesPeregrino(p, sistema);
 				}
@@ -167,24 +180,35 @@ public class Principal {
 		} while (!"3".equals(opcion));
 	}
 
+	/**
+	 * Muestra las opciones específicas para un peregrino, como exportar carnet y
+	 * sellar el carnet.
+	 *
+	 * @param p       El objeto Peregrino que representa al usuario actual.
+	 * @param sistema El objeto Sistema que gestiona la lógica de negocio.
+	 */
 	private static void mostrarOpcionesPeregrino(Peregrino p, Sistema sistema) {
 		ExportarCarnetXML exportar = new ExportarCarnetXML();
 		String opcion = "";
 		do {
 			String menu = "1. Exportar carnet\n" + "2. Sellar carnet (Implementación futura)\n" + "0. Cerrar sesión\n";
+
 			opcion = sistema.obtenerEntrada(menu, "Selecciona una opción", true);
-			if(opcion == null) {
-				JOptionPane.showMessageDialog(null, "Selecciona una opción.");
+			if (opcion == null) {
+				JOptionPane.showMessageDialog(null, "Selecciona una opción");
 				continue;
 			}
+
 			switch (opcion) {
 			case "1": {
 				// Exportar carnet
 				try {
 					exportar.exportarCarnet(p);
-				} catch (Exception e) {
-					System.out.println("Error: " + e.getLocalizedMessage());
-					e.printStackTrace();
+				} catch (NullPointerException ex) {
+					JOptionPane.showMessageDialog(null,
+							"No tiene carnet de peregrino disponible, cree uno en la parada inicial.");
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 				break;
 			}
@@ -210,9 +234,19 @@ public class Principal {
 				JOptionPane.showMessageDialog(null, "Opción no válida.");
 			}
 			}
-		} while (!opcion.equals("0"));
+		} while (true);
 	}
 
+	/**
+	 * Muestra las opciones específicas para un administrador, como registrar un
+	 * nuevo responsable de parada y cerrar sesión.
+	 *
+	 * @param sistema             El objeto Sistema que gestiona la lógica de
+	 *                            negocio.
+	 * @param archivoCredenciales Ruta del archivo de credenciales.
+	 * @param archivoParadas      Ruta del archivo de paradas.
+	 * @param nombreUsuario       Nombre del usuario administrador actual.
+	 */
 	private static void mostrarOpcionesAdmin(Sistema sistema, String archivoCredenciales, String archivoParadas,
 			String nombreUsuario) {
 		String opcion = "";
@@ -221,13 +255,14 @@ public class Principal {
 		do {
 			String menu = "1. Registrar responsable de parada\n" + "0. Cerrar sesión\n";
 			opcion = sistema.obtenerEntrada(menu, "Selecciona una opción", true);
-			if(opcion == null) {
+			if (opcion == null) {
 				JOptionPane.showMessageDialog(null, "Selecciona una opción.");
 				continue;
 			}
 			switch (opcion) {
 			case "1": {
-				String nombreParada = sistema.obtenerEntrada("Ingrese el nombre de la parada", "Nombre de la parada", false);
+				String nombreParada = sistema.obtenerEntrada("Ingrese el nombre de la parada", "Nombre de la parada",
+						false);
 				if (nombreParada == null) {
 					return;
 				}
@@ -242,7 +277,8 @@ public class Principal {
 					return;
 				}
 
-				String responsable = sistema.obtenerEntrada("¿Quien es el responsable de la parada?", "Responsable", false);
+				String responsable = sistema.obtenerEntrada("¿Quien es el responsable de la parada?", "Responsable",
+						false);
 
 				if (responsable == null) {
 					return;
@@ -259,7 +295,8 @@ public class Principal {
 				}
 
 				sistema.registrarParada(archivoParadas, nombreParada, region, responsable);
-				sistema.registrarCredenciales(archivoCredenciales, responsable, contraseniaResponsable, Perfil.parada.toString().toLowerCase(), false);
+				sistema.registrarCredenciales(archivoCredenciales, responsable, contraseniaResponsable,
+						Perfil.parada.toString().toLowerCase(), false);
 				break;
 			}
 			case "0": {

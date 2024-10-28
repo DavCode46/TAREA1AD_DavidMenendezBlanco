@@ -3,6 +3,11 @@ package modelo;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/**
+ * 
+ * Clase que representa una estancia de un peregrino en una parada 
+ * (No todas las paradas tienen estancia)
+ */
 public class Estancia {
 	private Long id;
 	private LocalDate fecha;

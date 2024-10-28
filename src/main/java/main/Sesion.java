@@ -4,6 +4,10 @@ import java.util.Objects;
 
 import modelo.Perfil;
 
+/**
+ * Clase que representa la sesion de un usuario en el sistema
+ * 
+ */
 public class Sesion {
 	
 	private String nombreUsuario;

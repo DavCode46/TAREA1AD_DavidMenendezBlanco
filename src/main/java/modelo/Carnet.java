@@ -3,6 +3,11 @@ package modelo;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/**
+ * 
+ * Clase que representa un carnet de peregrino
+ *(El carnet se crea en la primera parada que hace un peregrino)
+ */
 public class Carnet {
 	private Long id;
 	private LocalDate fechaExp = LocalDate.now();
