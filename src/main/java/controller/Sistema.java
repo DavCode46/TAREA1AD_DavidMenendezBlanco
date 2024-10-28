@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;
@@ -15,7 +16,13 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -248,7 +255,7 @@ public class Sistema {
 
 		String nacionalidad = "";
 		do {
-			nacionalidad = obtenerEntrada(mostrarPaises(), "Introduce el id de tu país", false);
+			nacionalidad = mostrarPaises();
 			if(!validarPais(nacionalidad)){
 				JOptionPane.showMessageDialog(null, "El país ingresado no es válido.");
 			}
@@ -336,7 +343,7 @@ public class Sistema {
 		if (nuevaContrasenia == null)
 			return null;
 
-		String nuevaNacionalidad = obtenerEntrada(mostrarPaises(), nacionalidad, false);
+		String nuevaNacionalidad = mostrarPaises();
 		if (nuevaNacionalidad == null)
 			return null;
 
@@ -463,44 +470,65 @@ public class Sistema {
 
 	 /**
      * Muestra la lista de países disponibles cargada desde el archivo XML.
-     * @return Cadena formateada con los países.
+     * @return ID del país seleccionado por el usuario o null si cancela
      */
 	public String mostrarPaises() {
-		try {
-			// Crear un parser
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document documento = builder.parse(new File("src/main/resources/paises.xml"));
-			documento.getDocumentElement().normalize();
-			System.out.println("Elemento raíz: " + documento.getDocumentElement().getNodeName());
+	    try {
+	        // Crear un parser
+	        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+	        Document documento = builder.parse(new File("src/main/resources/paises.xml"));
+	        documento.getDocumentElement().normalize();
 
-			// Crear una lista con todos los nodos 'pais'
-			NodeList paises = documento.getElementsByTagName("pais");
+	        // Crear una lista con todos los nodos país
+	        NodeList paises = documento.getElementsByTagName("pais");
+	        String[] columnas = {"ID", "País"}; 
 
-			StringBuilder sb = new StringBuilder("Países disponibles: \n");
+	       
+	        DefaultTableModel modeloTabla = new DefaultTableModel(columnas, 0);
 
-			for (int i = 0; i < paises.getLength(); i++) {
-				Node pais = paises.item(i);
-				if (pais.getNodeType() == Node.ELEMENT_NODE) {
-					Element elemento = (Element) pais;
-					String id = getNodo("id", elemento);
-					String nombrePais = getNodo("nombre", elemento);
-					// Agregar cada país a una fila de 4 columnas
-					sb.append(String.format("ID: %-5s País: %-20s", id, nombrePais));
+	        // Rellenar el modelo con datos del archivo paises.xml
+	        for (int i = 0; i < paises.getLength(); i++) {
+	            Node pais = paises.item(i);
+	            if (pais.getNodeType() == Node.ELEMENT_NODE) {
+	                Element elemento = (Element) pais;
+	                String id = getNodo("id", elemento);
+	                String nombrePais = getNodo("nombre", elemento);
+	                modeloTabla.addRow(new Object[]{id, nombrePais}); 
+	            }
+	        }
 
-					// Añadir un salto de línea después de cada 4 países
-					if ((i + 1) % 4 == 0) {
-						sb.append("\n");
-					} else {
-						sb.append("\t"); // Separar columnas con un tabulador
-					}
-				}
-			}
+	       // Tabla
+	        JTable tablaPaises = new JTable(modeloTabla);
+	        tablaPaises.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-			return sb.toString();
-		} catch (ParserConfigurationException | SAXException | IOException ex) {
-			System.err.println("Error: " + ex.getMessage());
-		}
-		return "No se han encontrado países";
+	       
+	        JTextField inputField = new JTextField();
+	        inputField.setColumns(10); 
+
+	        // Panel Tabla
+	        JPanel panel = new JPanel(new BorderLayout(5, 5));
+	        panel.add(new JScrollPane(tablaPaises), BorderLayout.CENTER);
+	        
+	        // InputField para la inserción del ID
+	        JPanel inputPanel = new JPanel(new BorderLayout(5, 5));
+	        inputPanel.add(new JLabel("Introduce el ID de tu país:"), BorderLayout.WEST);
+	        inputPanel.add(inputField, BorderLayout.CENTER);
+	        panel.add(inputPanel, BorderLayout.SOUTH); 
+
+	        // Añadir el panel principal a un JOptionPane.showConfirmDialog
+	        int option = JOptionPane.showConfirmDialog(null, panel, "Países disponibles:", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+	        
+	        if (option == JOptionPane.OK_OPTION) {
+	            return inputField.getText().trim(); 
+	        } else {
+	            return null; // cancelado
+	        }
+
+	    } catch (ParserConfigurationException | SAXException | IOException ex) {
+	        System.err.println("Error: " + ex.getMessage());
+	    }
+	    return null;
 	}
 	
 	 /**

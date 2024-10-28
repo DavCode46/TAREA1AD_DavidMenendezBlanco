@@ -14,3 +14,5 @@ santi santi peregrino 6
 sara sara peregrino 7
 carlos carlos peregrino 8
 raquel raquel peregrino 9
+tabla tabla peregrino 10
+Nombre Contraseña peregrino 11
