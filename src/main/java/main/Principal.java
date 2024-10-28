@@ -147,7 +147,7 @@ public class Principal {
 			case "2": {
 				// Registrar peregrino
 				p = sistema.registrarPeregrino();
-				System.out.print(p.getParadas());
+				
 				if (p != null) {
 					userActivo = new Sesion(p.getNombre(), Perfil.peregrino, p.getId());
 					String mensajeBienvenida = String.format(
@@ -191,7 +191,7 @@ public class Principal {
 		ExportarCarnetXML exportar = new ExportarCarnetXML();
 		String opcion = "";
 		do {
-			String menu = "1. Exportar carnet\n" + "2. Sellar carnet (Implementación futura)\n" + "0. Cerrar sesión\n";
+			String menu = "1. Exportar carnet\n" + "2. Sellar carnet (No disponible)\n" + "0. Cerrar sesión\n";
 
 			opcion = sistema.obtenerEntrada(menu, "Selecciona una opción", true);
 			if (opcion == null) {
@@ -274,7 +274,7 @@ public class Principal {
 
 				if (sistema.paradaExiste(nombreParada)) {
 					JOptionPane.showMessageDialog(null, "La parada ya existe.");
-					return;
+					continue;
 				}
 
 				String responsable = sistema.obtenerEntrada("¿Quien es el responsable de la parada?", "Responsable",
@@ -289,14 +289,26 @@ public class Principal {
 					return;
 				}
 
-				if (sistema.validarCredenciales(archivoCredenciales, nombreUsuario, contraseniaResponsable)) {
-					JOptionPane.showMessageDialog(null, "El responsable ya existe");
-					return;
+				String confirmarDatos = String.format(
+						"Datos de la nueva parada:\n Nombre: %s\nRegión: %s\nResponsable: %s\nContraseña: %s\n",
+						nombreParada, region, responsable, contraseniaResponsable);
+				int confirmacion = JOptionPane.showConfirmDialog(null, confirmarDatos, "Confirmar",
+						JOptionPane.YES_NO_OPTION);
+				if (confirmacion == JOptionPane.NO_OPTION) {
+					JOptionPane.showMessageDialog(null, "Volviendo al menú...");
+					continue;
+				} else {
+					if (!sistema.validarCredenciales(archivoCredenciales, responsable, contraseniaResponsable)) {
+
+						sistema.registrarParada(archivoParadas, nombreParada, region, responsable);
+						sistema.registrarCredenciales(archivoCredenciales, responsable, contraseniaResponsable,
+								Perfil.parada.toString().toLowerCase(), false);
+					} else {
+						JOptionPane.showMessageDialog(null,
+								"Error al registrar la parada. El responsable ya está ocupado.");
+					}
 				}
 
-				sistema.registrarParada(archivoParadas, nombreParada, region, responsable);
-				sistema.registrarCredenciales(archivoCredenciales, responsable, contraseniaResponsable,
-						Perfil.parada.toString().toLowerCase(), false);
 				break;
 			}
 			case "0": {

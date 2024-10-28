@@ -6,11 +6,7 @@ ferrol ferrol parada 4
 luis luis peregrino 2
 marta marta peregrino 3
 laura laura peregrino 4
-david david peregrino 5
-diego diego peregrino 6
-santi santi peregrino 7
-a a peregrino 8
-d d peregrino 9
 siero siero parada 5
 oviedo oviedo parada 6
-nueva nueva parada 7
+david david parada 7
+diego diego peregrino 5

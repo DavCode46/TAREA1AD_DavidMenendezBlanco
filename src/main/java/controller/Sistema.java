@@ -269,7 +269,7 @@ public class Sistema {
 		if (nuevoPeregrino == null) {
 			// Si la confirmación falla, pedir nuevos datos
 
-			nuevoPeregrino = obtenerDatosModificados(archivoCredenciales, nombre, contrasenia, nacionalidad, parada);
+			nuevoPeregrino = obtenerDatosModificados(archivoCredenciales, archivoParadas, nombre, contrasenia, nacionalidad, parada);
 
 		}
 		Parada paradaEncontrada = obtenerParada(parada);
@@ -324,8 +324,9 @@ public class Sistema {
 	 * @param parada
 	 * @return Peregrino con los datos modificados
 	 */
-	private Peregrino obtenerDatosModificados(String archivoCredenciales, String nombre, String contrasenia,
+	private Peregrino obtenerDatosModificados(String archivoCredenciales, String archivoParadas, String nombre, String contrasenia,
 			String nacionalidad, String parada) {
+		Peregrino nuevoPeregrino = null;
 		// Pide los nuevos datos al usuario
 		String nuevoNombre = obtenerEntrada("Ingrese su nuevo nombre", nombre, false);
 		if (nuevoNombre == null)
@@ -346,7 +347,10 @@ public class Sistema {
 		// Crear el nuevo peregrino
 		Long id = obtenerSiguienteId(archivoCredenciales, true);
 		Parada paradaObj = obtenerParada(nuevaParada);
-		return new Peregrino(id, nuevoNombre, nuevaNacionalidad, new Carnet(id, paradaObj));
+		nuevoPeregrino = new Peregrino(id, nuevoNombre, nuevaNacionalidad, new Carnet(id, paradaObj));
+		nuevoPeregrino.getParadas().add(paradaObj);
+		paradaObj.getPeregrinos().add(nuevoPeregrino);
+		return nuevoPeregrino;
 	}
 
 	/**
