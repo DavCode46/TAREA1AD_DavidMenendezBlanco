@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <carnet>
     <id>6</id>
-    <fechaexp>2024-10-28</fechaexp>
-    <expedidoen>gijon</expedidoen>
+    <fechaexp>2024-10-29</fechaexp>
+    <expedidoen>siero</expedidoen>
     <peregrino>
         <nombre>santi</nombre>
-        <nacionalidad>ae</nacionalidad>
+        <nacionalidad>ca</nacionalidad>
     </peregrino>
-    <hoy>2024-10-28</hoy>
+    <hoy>2024-10-29</hoy>
     <distanciatotal>0,0</distanciatotal>
     <paradas>
         <parada>
             <orden>1</orden>
-            <nombre>gijon</nombre>
-            <region>g</region>
+            <nombre>siero</nombre>
+            <region>s</region>
         </parada>
     </paradas>
     <estancias/>

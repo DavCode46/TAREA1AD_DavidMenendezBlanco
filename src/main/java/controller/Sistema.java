@@ -484,7 +484,13 @@ public class Sistema {
 	        String[] columnas = {"ID", "País"}; 
 
 	       
-	        DefaultTableModel modeloTabla = new DefaultTableModel(columnas, 0);
+	        DefaultTableModel modeloTabla = new DefaultTableModel(columnas, 0) {
+	            @Override
+	            public boolean isCellEditable(int row, int column) {
+	                return false; // Evita que el usuario pueda editar las celdas de la tabla
+	            }
+	        };
+
 
 	        // Rellenar el modelo con datos del archivo paises.xml
 	        for (int i = 0; i < paises.getLength(); i++) {
