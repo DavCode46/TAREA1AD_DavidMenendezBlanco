@@ -33,20 +33,6 @@ public class Principal {
 	 * @param args Argumentos de la línea de comandos (no se utilizan).
 	 */
 	public static void main(String[] args) {
-		/*
-		 * Datos ficticios para probar la salida del archivo XML exportado
-		 * 
-		 * Peregrino p = new Peregrino(1L, "Pepe", "España", new Carnet(1L, new
-		 * Parada(1L, "Sevilla", 'A', "Pepe"))); Parada parada = new Parada(1L,
-		 * "Sevilla", 'A', "Jose"); Parada parada2 = new Parada(2L, "Asturias", 'B',
-		 * "Diego"); List<Estancia> estancias = new ArrayList<>(); List <Parada> paradas
-		 * = new ArrayList<>(); paradas.add(parada); paradas.add(parada2);
-		 * estancias.add(new Estancia(1L, LocalDate.of(2022, 10, 30), true, p, parada));
-		 * estancias.add(new Estancia(2L, LocalDate.of(1993, 10, 16), false, p,
-		 * parada2)); p.setEstancias(estancias); p.setParadas(paradas);
-		 * ExportarCarnetXML exportar = new ExportarCarnetXML(); try {
-		 * exportar.exportarCarnet(p); } catch (Exception e) { e.printStackTrace(); }
-		 */
 
 		mostrarMenu();
 
@@ -147,17 +133,15 @@ public class Principal {
 			case "2": {
 				// Registrar peregrino
 				p = sistema.registrarPeregrino();
-				
+
 				if (p != null) {
 					userActivo = new Sesion(p.getNombre(), Perfil.peregrino, p.getId());
-					String mensajeBienvenida = String.format(
-							"Sus datos:\n" + "ID: %s\n" + "Nombre: %s\n" + "Nacionalidad: %s\n"
-									+ "Fecha de expedición del carnet: %s\n" + "Parada inicial: %s\n"
-									+ "Región de la parada: %s\n"
-									+ "Distancia recorrida: %.2f km\n"
-									+ "Número de VIPS: %d\n",
+					String mensajeBienvenida = String.format("Sus datos:\n" + "ID: %s\n" + "Nombre: %s\n"
+							+ "Nacionalidad: %s\n" + "Fecha de expedición del carnet: %s\n" + "Parada inicial: %s\n"
+							+ "Región de la parada: %s\n" + "Distancia recorrida: %.2f km\n" + "Número de VIPS: %d\n",
 							p.getId(), p.getNombre(), p.getNacionalidad(), p.getCarnet().getFechaExp(),
-							p.getParadas().get(0).getNombre(), p.getParadas().get(0).getRegion(), p.getCarnet().getDistancia(), p.getCarnet().getnVips());
+							p.getParadas().get(0).getNombre(), p.getParadas().get(0).getRegion(),
+							p.getCarnet().getDistancia(), p.getCarnet().getnVips());
 					JOptionPane.showMessageDialog(null, mensajeBienvenida);
 					ExportarCarnetXML exportar = new ExportarCarnetXML();
 					try {
